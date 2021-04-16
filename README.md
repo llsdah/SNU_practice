@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @llsdah
-- 👀 I’m interested in Algorithm
-- 🌱 I’m currently learning Java AI, data analysis(?)
-- 💞️ I’m looking to collaborate on AlgorithmTest(Basic)
+- 👀 I’m interested in ..
+- 🌱 I’m currently learning ..
+- 💞️ I’m looking to collaborate on ..
 - 📫 How to reach me ...
 
 <!---
