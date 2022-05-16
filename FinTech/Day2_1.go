@@ -50,6 +50,9 @@ func main() {
 	}
 
 	temp_err(err, 5, conn)
+
+	single_query(conn)
+	multi_query(conn)
 	fmt.Println("End of Day2")
 
 }
@@ -64,6 +67,7 @@ func temp_err(eee error, num int, conn *sql.DB) {
 func single_query(conn *sql.DB) {
 	var name string
 	err := conn.QueryRow("select id from orangeTest where id = 'carrot'").Scan(&name)
+	fmt.Println("single")
 	temp_err(err, 6, conn)
 
 }
@@ -83,5 +87,7 @@ func multi_query(conn *sql.DB) {
 		temp_err(err, 8, conn)
 		fmt.Println(id, name1)
 	}
+
+	fmt.Println("multi")
 
 }
