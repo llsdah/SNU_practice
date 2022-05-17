@@ -1,0 +1,166 @@
+Microsoft Windows [Version 10.0.19044.1706]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\hong>openssl genrsa -out CAPriv.pem 2048
+Generating RSA private key, 2048 bit long modulus (2 primes)
+.............................+++++
+...........+++++
+e is 65537 (0x010001)
+
+C:\Users\hong>openssl req -new -key CAPriv.pen -out CAReq.pem
+Can't open CAPriv.pen for reading, No such file or directory
+3232:error:02001002:system library:fopen:No such file or directory:crypto\bio\bss_file.c:69:fopen('CAPriv.pen','r')
+3232:error:2006D080:BIO routines:BIO_new_file:no such file:crypto\bio\bss_file.c:76:
+unable to load Private Key
+
+C:\Users\hong>openssl version
+OpenSSL 1.1.1o  3 May 2022
+
+C:\Users\hong>openssl req -new -key CAPriv.pem -out CAReq.pem
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:daehong
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+C:\Users\hong>openssl x509 -req -das 365 -in -CAReq.pem -signkey CAPriv.pem -out CACert.pem
+x509: Unrecognized flag das
+x509: Use -help for summary.
+
+C:\Users\hong>openssl x509 -req -days 365 -in -CAReq.pem -signkey CAPriv.pem -out CACert.pem
+Can't open -CAReq.pem for reading, No such file or directory
+11784:error:02001002:system library:fopen:No such file or directory:crypto\bio\bss_file.c:69:fopen('-CAReq.pem','r')
+11784:error:2006D080:BIO routines:BIO_new_file:no such file:crypto\bio\bss_file.c:76:
+
+C:\Users\hong>openssl x509 -req -days 365 -in CAReq.pem -signkey CAPriv.pem -out CACert.pem
+Signature ok
+subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = daehong
+Getting Private key
+
+C:\Users\hong>mkdir Alice
+
+C:\Users\hong>cd Alice
+
+C:\Users\hong\Alice>openssl genrsa -out AlicePriv.pem 2048
+Generating RSA private key, 2048 bit long modulus (2 primes)
+..............................................+++++
+........................................................+++++
+e is 65537 (0x010001)
+
+C:\Users\hong\Alice>openssl req -new -key AlicePriv.pem -out AliceReq.pem
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:Alice
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+C:\Users\hong\Alice>copy AliceReq.pem ..
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong\Alice>cd ..
+
+C:\Users\hong>openssl x509 -req -days 365 -CA CACert.pem -CAkey CAPriv.pem -CAcreateserial -in AliceReq.pem -out AliceCert.pem
+Signature ok
+subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = Alice
+Getting CA Private Key
+
+C:\Users\hong>copy AliceCert.pem Alice\
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong>copy CACert.pem Alice\
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong>cd Alice
+
+C:\Users\hong\Alice>openssl verify -CAfile CACert.pem CACert.pem
+CACert.pem: OK
+
+C:\Users\hong\Alice>openssl verify -CAfile CACert.pem AliceCert.pem
+AliceCert.pem: OK
+
+C:\Users\hong\Alice>mkdir Bob
+
+C:\Users\hong\Alice>cd ..
+
+C:\Users\hong>mkdir Bob
+
+C:\Users\hong>cd Bob
+
+C:\Users\hong\Bob>openssl genrsa -out BobPriv.pem 2048
+Generating RSA private key, 2048 bit long modulus (2 primes)
+...+++++
+...........................................+++++
+e is 65537 (0x010001)
+
+C:\Users\hong\Bob>openssl req -new -key BobPriv.pem -out BobReq.pem
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:Bob
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+C:\Users\hong\Bob>copy BobReq.pem ..
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong\Bob>cd ..
+
+C:\Users\hong>openssl x509 -req -days 365 -CA CACert.pem -CAkey CAPriv.pem -CAserial CACert.srl -in BobReq.pem -out BobCert.pem
+Signature ok
+subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = Bob
+Getting CA Private Key
+
+C:\Users\hong>copy BobCert.pem Bob\
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong>copy CACert.pem Bob\
+        1개 파일이 복사되었습니다.
+
+C:\Users\hong>openssl verify -CAfile CACert.pem CACert.pem
+CACert.pem: OK
+
+C:\Users\hong>openssl verify -CAfile CACert.pem BobCert.pem
+BobCert.pem: OK
+
+C:\Users\hong>
